@@ -1,0 +1,4 @@
+../Application/modules/utils/alt_speed.c:27:6:initKalmanFilter	1
+../Application/modules/utils/alt_speed.c:41:6:kalmanFilterUpdate	1
+../Application/modules/utils/alt_speed.c:69:6:KalmanInit	1
+../Application/modules/utils/alt_speed.c:73:7:getVSpeedKalman	1
