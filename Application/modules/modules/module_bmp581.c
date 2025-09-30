@@ -5,6 +5,7 @@
  *      Author: kjkim
  */
 #include "../../../Application/include/modules/module_bmp581.h"
+#include "app_config.h"
 
 extern I2C_HandleTypeDef hi2c1;
 extern I2C_HandleTypeDef hi2c2;
@@ -19,7 +20,7 @@ static int8_t get_fifo_data(struct bmp5_fifo *fifo, struct bmp5_dev *dev);
 #define BMP5_FIFO_T_FRAME_COUNT     UINT8_C(32)
 #define BMP5_FIFO_P_FRAME_COUNT     UINT8_C(32)
 
-
+extern str_bit CBIT, IBIT, PBIT;
 
 void bmp581_init(BMP581_DEV *sensor)
 {
@@ -46,11 +47,13 @@ void bmp581_init(BMP581_DEV *sensor)
 	    {
 	        rslt = bmp5_init(&sensor[i]);
 	        sensor[i].init_error = rslt;
+	        PBIT.sensor_error[i] = rslt;
 
 	        if (rslt == BMP5_OK)
 	        {
 	            rslt = set_config(&sensor[i].fifo, &sensor[i]);
 	            sensor[i].config_error = rslt;
+	            IBIT.sensor_error[i] = rslt;
 	        }
 	    }
 	}

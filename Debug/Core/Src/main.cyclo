@@ -6,8 +6,8 @@
 ../Core/Src/main.c:345:13:MX_USART1_UART_Init	5
 ../Core/Src/main.c:391:13:MX_DMA_Init	1
 ../Core/Src/main.c:413:13:MX_GPIO_Init	1
-../Core/Src/main.c:451:13:task_BMP2ADS	1
-../Core/Src/main.c:469:13:task_ISS2ADS	1
-../Core/Src/main.c:487:13:task_Flash	1
-../Core/Src/main.c:506:6:HAL_TIM_PeriodElapsedCallback	2
-../Core/Src/main.c:524:6:Error_Handler	1
+../Core/Src/main.c:450:13:task_BMP2ADS	1
+../Core/Src/main.c:468:13:task_ISS2ADS	1
+../Core/Src/main.c:486:13:task_Flash	1
+../Core/Src/main.c:505:6:HAL_TIM_PeriodElapsedCallback	2
+../Core/Src/main.c:523:6:Error_Handler	1

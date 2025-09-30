@@ -164,10 +164,9 @@ typedef enum
 
 typedef struct
 {
-	int8_t 	sensor01_error;
-	int8_t 	sensor02_error;
-	int8_t 	sensor03_error;
-	int8_t 	sensor04_error;
+	int8_t 	sensor_error[4];
+	uint8_t uart_error;
+	uint8_t flash_error;
 } str_bit;
 
 

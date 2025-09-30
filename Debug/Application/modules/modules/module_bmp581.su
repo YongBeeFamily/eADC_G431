@@ -1,4 +1,4 @@
-../Application/modules/modules/module_bmp581.c:24:6:bmp581_init	24	static
-../Application/modules/modules/module_bmp581.c:60:8:get_data	24	static
-../Application/modules/modules/module_bmp581.c:70:15:set_config	40	static
-../Application/modules/modules/module_bmp581.c:159:15:get_fifo_data	248	static
+../Application/modules/modules/module_bmp581.c:25:6:bmp581_init	24	static
+../Application/modules/modules/module_bmp581.c:63:8:get_data	24	static
+../Application/modules/modules/module_bmp581.c:73:15:set_config	40	static
+../Application/modules/modules/module_bmp581.c:162:15:get_fifo_data	248	static

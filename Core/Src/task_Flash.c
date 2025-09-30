@@ -18,7 +18,7 @@ extern BMP581_DEV sensor[4];
 Str_uart_rx RxCali;
 APP_SETTINGS AppSettings;
 uint8_t RxBuf[100] = {0,};
-
+extern str_bit CBIT, IBIT, PBIT;
 
 uint64_t Float2uint64_t(float fData)
 {

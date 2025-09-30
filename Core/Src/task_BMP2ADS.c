@@ -29,6 +29,8 @@ extern I2C_HandleTypeDef hi2c2;
 extern IWDG_HandleTypeDef hiwdg;
 int WDG_count = 0;
 
+str_bit CBIT, IBIT, PBIT;
+
 void task_BMP2ADS(void const *argument) {
 	/* USER CODE BEGIN task_BMP2ADS */
 	TickType_t xLastWakeTime = xTaskGetTickCount();
@@ -44,8 +46,8 @@ void task_BMP2ADS(void const *argument) {
 
 		for (int i = 0; i < BME581_COUNT; i++) {
 			err = get_data(&sensor[i]);
-			if (err < 0)
-				bmp581_status |= (1 << i);
+
+			CBIT.sensor_error[i] = err;
 
 			if (err == BMP5_OK)
 			{

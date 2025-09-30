@@ -148,7 +148,7 @@ float VerticalSpeed_avg_func(float value) {
 
 float preAlt, verticalSpeed;
 uint32_t preTime, deltaTime;
-
+extern str_bit CBIT, IBIT, PBIT;
 
 void ADS2OFP_DATA(void)
 {
@@ -188,16 +188,15 @@ void ADS2OFP_DATA(void)
   ADS2OFP_Buff[sizeof(ICD_eADC2OFP) - 1] = ICD_eADC2OFP.Checksum;
 
 
-  HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&ADS2OFP_Buff, sizeof(ADS2OFP_Buff));
+  CBIT.uart_error = HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&ADS2OFP_Buff, sizeof(ICD_eADC2OFP));
 }
-
 
 
 void task_ISS2ADS(void const * argument)
 {
 	/* USER CODE BEGIN task_GCS2ADS */
 	TickType_t xLastWakeTime = xTaskGetTickCount();
-	const TickType_t xFrequency = 10;
+	const TickType_t xFrequency = 100;
 
 	vTaskDelay(1000);
 
@@ -210,7 +209,7 @@ void task_ISS2ADS(void const * argument)
 	{
 		ADS2OFP_DATA();
 
-		vTaskDelayUntil(&xLastWakeTime, xFrequency);
+		vTaskDelayUntil(&xLastWakeTime, (const TickType_t)xFrequency);
 	}
 	/* USER CODE END task_GCS2ADS */
 }
