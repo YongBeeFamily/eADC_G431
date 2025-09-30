@@ -1,7 +1,0 @@
-../Core/Src/task_Flash.c:23:10:Float2uint64_t	1
-../Core/Src/task_Flash.c:35:7:uint64_t2Float	1
-../Core/Src/task_Flash.c:48:6:Flash_Write	1
-../Core/Src/task_Flash.c:54:9:Flash_Read	1
-../Core/Src/task_Flash.c:58:6:Flash_Erase_Page	1
-../Core/Src/task_Flash.c:74:6:HAL_UARTEx_RxEventCallback	10
-../Core/Src/task_Flash.c:127:6:task_Flash	1

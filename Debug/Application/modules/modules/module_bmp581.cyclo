@@ -1,4 +1,0 @@
-../Application/modules/modules/module_bmp581.c:24:6:bmp581_init	4
-../Application/modules/modules/module_bmp581.c:60:8:get_data	1
-../Application/modules/modules/module_bmp581.c:70:15:set_config	8
-../Application/modules/modules/module_bmp581.c:159:15:get_fifo_data	6

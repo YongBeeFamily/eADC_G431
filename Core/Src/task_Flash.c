@@ -46,9 +46,20 @@ float uint64_t2Float(uint64_t data)
 
 
 void Flash_Write(uint32_t address, uint64_t data) {
-    HAL_FLASH_Unlock();
-    HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, address, data);
-    HAL_FLASH_Lock();
+//    HAL_FLASH_Unlock();
+//    HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, address, data);
+//    HAL_FLASH_Lock();
+
+	uint8_t *pData = (uint8_t *)&AppSettings;
+	HAL_FLASH_Unlock();
+	for (uint32_t i = 0; i < sizeof(APP_SETTINGS); i += 8) // G4는 Double Word(8바이트) 단위 쓰기
+	{
+	    uint64_t data64 = 0;
+	    memcpy(&data64, pData + i, sizeof(uint64_t));
+	    HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, USER_DATA_ADDR + i, data64);
+//	    HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, address+i, data);
+	}
+	HAL_FLASH_Lock();
 }
 
 uint8_t Flash_Read(uint32_t address) {
@@ -70,7 +81,6 @@ void Flash_Erase_Page(uint32_t pageAddress) {
     HAL_FLASH_Lock();
 }
 
-
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
 	uint8_t checksum = 0;
@@ -81,36 +91,38 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 	{
 		if ((RxBuf[0] == 'L') && (RxBuf[1] == 'G'))
 		{
-			memcpy((void *)&RxCali, (void *)&RxBuf, sizeof(RxBuf));
+			memcpy((void *)&RxCali, (void *)&RxBuf, sizeof(RxCali));
 
 			checksum = 0;
-			for (int i = 2; i < sizeof(RxCali)-1; i++)
+			for (int i = 2; i < sizeof(RxCali); i++)
 			{
 				checksum ^= RxBuf[i];
 			}
-
 			if (checksum == 0)
 			{
+				tempFloat = (float)RxCali.data[0];
 				AppSettings.CORRECTIONPRESSUREVALUE = sensor[0].sensor_data.pressure - (tempFloat*100);
 //				temp64 = Float2uint64_t(AppSettings.CORRECTIONPRESSUREVALUE);
 
 				Flash_Erase_Page(USER_DATA_ADDR);
 				Flash_Write(USER_DATA_ADDR, (uint64_t)&AppSettings);
 			}
-		} else if ((RxBuf[0] == 'L') && (RxBuf[1] == 'H'))
+		}
+		else if ((RxBuf[0] == 'L') && (RxBuf[1] == 'H'))
 		{
-			memcpy((void *)&RxCali, (void *)&RxBuf, sizeof(RxBuf));
+			memcpy((void *)&RxCali, (void *)&RxBuf, sizeof(RxCali));
 
 			checksum = 0;
-			for (int i = 2; i < sizeof(RxCali)-1; i++)
+			for (int i = 2; i < sizeof(RxCali); i++)
 			{
 				checksum ^= RxBuf[i];
 			}
 
 			if (checksum == 0)
 			{
+				memset((void *)AppSettings.SERIALNO, 0, sizeof(AppSettings.SERIALNO));
 				strcpy((char *)AppSettings.SERIALNO, (char *)RxCali.SERIALNO);
-				tempFloat = RxCali.data[0];
+//				memcpy((void *)&AppSettings.SERIALNO, (void *)&RxBuf[11], sizeof(AppSettings.SERIALNO));
 
 				Flash_Erase_Page(USER_DATA_ADDR);
 				Flash_Write(USER_DATA_ADDR, (uint64_t)&AppSettings);
@@ -122,7 +134,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 	}
 }
 
-
+uint8_t tempBuf[100];
 
 void task_Flash(void const * argument)
 {
@@ -141,10 +153,21 @@ void task_Flash(void const * argument)
 	HAL_UARTEx_ReceiveToIdle_DMA(&huart1, RxBuf, sizeof(RxBuf));
 	__HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
 
-	AppSettings.CORRECTIONPRESSUREVALUE = DEFAULT_CORRECTIONPRESSUREVALUE;
+//	AppSettings.CORRECTIONPRESSUREVALUE = DEFAULT_CORRECTIONPRESSUREVALUE;
+//
+//	temp = Flash_Read(USER_DATA_ADDR);
+//	AppSettings = *(APP_SETTINGS *)temp;
+//	for (int i = 0; i < sizeof(APP_SETTINGS); i++)
+//	{
+//		((uint8_t *)&AppSettings)[i] = Flash_Read(USER_DATA_ADDR + i);
+//	}
+	uint8_t *pRead = (uint8_t *)&AppSettings;
+	for (uint32_t i = 0; i < sizeof(APP_SETTINGS); i++)
+	{
+	    pRead[i] = *(uint8_t *)(USER_DATA_ADDR + i);
+	}
 
-	temp = Flash_Read(USER_DATA_ADDR);
-	AppSettings = *(APP_SETTINGS *)temp;
+
 
 	for(;;)
 	{

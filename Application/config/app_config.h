@@ -97,8 +97,8 @@ typedef struct
 	uint8_t 					HEADER1;
 	uint8_t 					HEADER2;
 	uint8_t 					Label;
+	float						data[2];
 	uint8_t 					SERIALNO[32];
-	float						data[10];
 	uint8_t 					Checksum;
 } Str_uart_rx;
 #pragma pack(pop)
