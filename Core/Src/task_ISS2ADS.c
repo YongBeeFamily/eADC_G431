@@ -153,8 +153,8 @@ extern str_bit CBIT, IBIT, PBIT;
 void ADS2OFP_DATA(void)
 {
   uint8_t loop = 0;
-  ICD_eADC2OFP.HEADER1 = HEADER_ADS2OFP0;
-  ICD_eADC2OFP.HEADER2 = HEADER_ADS2OFP1;
+  ICD_eADC2OFP.HEADER1 = HEADER_ADS2OFP0;	// 65
+  ICD_eADC2OFP.HEADER2 = HEADER_ADS2OFP1;	// 79
 
   ICD_eADC2OFP.CMD_Counter++;
 
@@ -188,7 +188,7 @@ void ADS2OFP_DATA(void)
   ADS2OFP_Buff[sizeof(ICD_eADC2OFP) - 1] = ICD_eADC2OFP.Checksum;
 
 
-  CBIT.uart_error = HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&ADS2OFP_Buff, sizeof(ICD_eADC2OFP));
+  CBIT.uart_error = HAL_UART_Transmit_IT(&huart1, (uint8_t *)&ADS2OFP_Buff, sizeof(ICD_eADC2OFP));
 }
 
 
