@@ -16,7 +16,7 @@ extern UART_HandleTypeDef huart1;
 static uint8_t ADS2OFP_Buff[256];
 
 extern volatile float ADC_Val_avg[ADC_MAX];
-
+extern str_bit CBIT, IBIT, PBIT;
 
 extern BMP581_DEV sensor[ADC_MAX];
 
@@ -148,17 +148,15 @@ float VerticalSpeed_avg_func(float value) {
 
 float preAlt, verticalSpeed;
 uint32_t preTime, deltaTime;
-
+extern str_bit CBIT, IBIT, PBIT;
 
 void ADS2OFP_DATA(void)
 {
   uint8_t loop = 0;
-  ICD_eADC2OFP.HEADER1 = HEADER_ADS2OFP0;
-  ICD_eADC2OFP.HEADER2 = HEADER_ADS2OFP1;
+  ICD_eADC2OFP.HEADER1 = HEADER_ADS2OFP0;	// 65
+  ICD_eADC2OFP.HEADER2 = HEADER_ADS2OFP1;	// 79
 
   ICD_eADC2OFP.CMD_Counter++;
-
-  ICD_eADC2OFP.BMP581_STATUS = bmp581_status;
 
   ICD_eADC2OFP.AirPosVel.Altitude						= VerticalPress_avg_func((float)(Calib_Volt2PS(ADC_Val_avg[ENUM_PRESS_STATIC])));
   ICD_eADC2OFP.AirPosVel.Velocity						= (float)(Calib_Volt2PT(ADC_Val_avg[ENUM_PRESS_STATIC], ADC_Val_avg[ENUM_PRESS_DIFF]));
@@ -178,6 +176,30 @@ void ADS2OFP_DATA(void)
   ICD_eADC2OFP.PTPStemp.PS_Temp							= ADC_Val_avg[ENUM_TEMP_STATIC];
   ICD_eADC2OFP.PTPStemp.PT_Temp							= ADC_Val_avg[ENUM_TEMP_DIFF];
 
+  ICD_eADC2OFP.bit.PBIT = 0;
+  ICD_eADC2OFP.bit.IBIT = 0;
+  ICD_eADC2OFP.bit.CBIT = 0;
+  for (int i = 0; i < BME581_COUNT; i++)
+  {
+	  if (i < BME581_COUNT)
+	  {
+		  if (PBIT.sensor_status[i] != BMP5_OK) ICD_eADC2OFP.bit.PBIT |= (0x1 << i);
+		  if (IBIT.sensor_status[i] != BMP5_OK) ICD_eADC2OFP.bit.IBIT |= (0x1 << i);
+		  if (CBIT.sensor_status[i] != BMP5_OK) ICD_eADC2OFP.bit.CBIT |= (0x1 << i);
+	  }
+  }
+  if (PBIT.uart_status != BMP5_OK) ICD_eADC2OFP.bit.PBIT |= (0x1 << 4);
+  if (IBIT.uart_status != BMP5_OK) ICD_eADC2OFP.bit.IBIT |= (0x1 << 4);
+  if (CBIT.uart_status != BMP5_OK) ICD_eADC2OFP.bit.CBIT |= (0x1 << 4);
+
+  if (PBIT.flash_status != BMP5_OK) ICD_eADC2OFP.bit.PBIT |= (0x1 << 5);
+  if (IBIT.flash_status != BMP5_OK) ICD_eADC2OFP.bit.IBIT |= (0x1 << 5);
+  if (CBIT.flash_status != BMP5_OK) ICD_eADC2OFP.bit.CBIT |= (0x1 << 5);
+
+  if (PBIT.watchdog_status != BMP5_OK) ICD_eADC2OFP.bit.PBIT |= (0x1 << 6);
+  if (IBIT.watchdog_status != BMP5_OK) ICD_eADC2OFP.bit.IBIT |= (0x1 << 6);
+  if (CBIT.watchdog_status != BMP5_OK) ICD_eADC2OFP.bit.CBIT |= (0x1 << 6);
+
   memcpy(&ADS2OFP_Buff[0], & ICD_eADC2OFP, sizeof(ICD_eADC2OFP));
 
   ICD_eADC2OFP.Checksum = 0;
@@ -188,22 +210,30 @@ void ADS2OFP_DATA(void)
   ADS2OFP_Buff[sizeof(ICD_eADC2OFP) - 1] = ICD_eADC2OFP.Checksum;
 
 
-  HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&ADS2OFP_Buff, sizeof(ADS2OFP_Buff));
+  CBIT.uart_status = HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&ADS2OFP_Buff, sizeof(ICD_eADC2OFP));
 }
-
 
 
 void task_ISS2ADS(void const * argument)
 {
 	/* USER CODE BEGIN task_GCS2ADS */
 	TickType_t xLastWakeTime = xTaskGetTickCount();
-	const TickType_t xFrequency = 10;
+	const TickType_t xFrequency = 20;
 
 	vTaskDelay(1000);
 
 //	kal_init();
 //	myKalmanInit();
 	KalmanInit();
+
+	if(huart1.gState == HAL_UART_STATE_READY)
+	{
+		PBIT.uart_status = 0;
+	}
+	else
+	{
+		PBIT.uart_status = 1;
+	}
 
 	/* Infinite loop */
 	for(;;)

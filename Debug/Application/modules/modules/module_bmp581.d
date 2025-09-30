@@ -24,6 +24,7 @@ Application/modules/modules/module_bmp581.o: \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash_ex.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash_ramfunc.h \
+ ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_iwdg.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_i2c.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_i2c_ex.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_pwr.h \
@@ -36,7 +37,8 @@ Application/modules/modules/module_bmp581.o: \
  E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/../../../Application/include/drivers/bmp5_defs.h \
  E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/bmp5_defs.h \
  ../Application/modules/modules/../../../Application/include/modules/common.h \
- ../Application/modules/modules/../../../Application/include/modules/../../../Application/include/drivers/bmp5.h
+ ../Application/modules/modules/../../../Application/include/modules/../../../Application/include/drivers/bmp5.h \
+ E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/config/app_config.h
 ../Application/modules/modules/../../../Application/include/modules/module_bmp581.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
@@ -62,6 +64,7 @@ Application/modules/modules/module_bmp581.o: \
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash_ex.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash_ramfunc.h:
+../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_iwdg.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_i2c.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_i2c_ex.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_pwr.h:
@@ -75,3 +78,4 @@ E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/dri
 E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/bmp5_defs.h:
 ../Application/modules/modules/../../../Application/include/modules/common.h:
 ../Application/modules/modules/../../../Application/include/modules/../../../Application/include/drivers/bmp5.h:
+E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/config/app_config.h:

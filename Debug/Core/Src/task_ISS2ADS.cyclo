@@ -2,5 +2,5 @@
 ../Core/Src/task_ISS2ADS.c:74:14:Calib_Volt2PT	2
 ../Core/Src/task_ISS2ADS.c:115:7:VerticalPress_avg_func	3
 ../Core/Src/task_ISS2ADS.c:131:7:VerticalSpeed_avg_func	3
-../Core/Src/task_ISS2ADS.c:153:6:ADS2OFP_DATA	2
-../Core/Src/task_ISS2ADS.c:196:6:task_ISS2ADS	1
+../Core/Src/task_ISS2ADS.c:153:6:ADS2OFP_DATA	16
+../Core/Src/task_ISS2ADS.c:217:6:task_ISS2ADS	2
