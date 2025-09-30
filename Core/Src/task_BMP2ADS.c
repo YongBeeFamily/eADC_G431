@@ -42,12 +42,11 @@ void task_BMP2ADS(void const *argument) {
 
 	/* Infinite loop */
 	for (;;) {
-		bmp581_status = 0;
 
 		for (int i = 0; i < BME581_COUNT; i++) {
 			err = get_data(&sensor[i]);
 
-			CBIT.sensor_error[i] = err;
+			CBIT.sensor_status[i] = err;
 
 			if (err == BMP5_OK)
 			{
@@ -67,6 +66,15 @@ void task_BMP2ADS(void const *argument) {
 		if (++WDG_count >= 50) {
 			WDG_count = 0;
 			HAL_IWDG_Refresh(&hiwdg);
+
+			if (__HAL_RCC_GET_FLAG(RCC_FLAG_IWDGRST))
+			{
+				PBIT.watchdog_status = 1;
+			}
+			else
+			{
+				PBIT.watchdog_status = 0;
+			}
 		}
 
 

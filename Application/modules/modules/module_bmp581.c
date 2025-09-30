@@ -47,13 +47,13 @@ void bmp581_init(BMP581_DEV *sensor)
 	    {
 	        rslt = bmp5_init(&sensor[i]);
 	        sensor[i].init_error = rslt;
-	        PBIT.sensor_error[i] = rslt;
+	        PBIT.sensor_status[i] = rslt;
 
 	        if (rslt == BMP5_OK)
 	        {
 	            rslt = set_config(&sensor[i].fifo, &sensor[i]);
 	            sensor[i].config_error = rslt;
-	            IBIT.sensor_error[i] = rslt;
+	            IBIT.sensor_status[i] = rslt;
 	        }
 	    }
 	}

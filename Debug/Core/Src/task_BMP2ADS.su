@@ -1,2 +1,2 @@
 ../Core/Src/task_BMP2ADS.c:34:6:task_BMP2ADS	32	static
-../Core/Src/task_BMP2ADS.c:79:6:Adc_avg_func	32	static
+../Core/Src/task_BMP2ADS.c:87:6:Adc_avg_func	32	static

@@ -122,6 +122,9 @@ typedef enum
 #define HEADER_ADS2OFP0				        'A'
 #define HEADER_ADS2OFP1				        'O'
 
+#define HEADER_ADS2OFP2				        'L'
+#define HEADER_ADS2OFP3				        'G'
+
 
 #pragma pack(push,1)   // pragma directive to specify the alignment of structs (1 byte)
 	typedef struct
@@ -143,30 +146,37 @@ typedef enum
 		float 					PS_Temp;
 	} eADC_BMP390TEMP, *ptr_eADC_BMP390TEMP;
 
+	typedef struct
+	{
+		uint8_t 					PBIT;
+		uint8_t 					IBIT;
+		uint8_t 					CBIT;
+	} eADC_BIT, *ptr_eADC_BIT;
+
 
 	typedef struct
 	{
 		uint8_t 					HEADER1;
 		uint8_t 					HEADER2;
 
-		uint8_t 					CMD_Counter;
-
-		uint8_t 					BMP581_STATUS;		// 4
+		uint8_t 					CMD_Counter;		// 3
 
 		eADC_AIRPOSVEL_TYPE 		AirPosVel;			// 12
 		eADC_AIRDATA_RAW_TYPE 		AirData_Raw;		// 8
 		eADC_BMP390TEMP				PTPStemp;			// 8
+		eADC_BIT 					bit;				// 3
 
 		uint8_t 					Checksum;			// 1
-	} ICD_eADC2OFP_TYPE, *ptr_ICD_eADCeADC2OFP_TYPE;	// 33 = 4 + 12 + 8 + 8 + 1
+	} ICD_eADC2OFP_TYPE, *ptr_ICD_eADCeADC2OFP_TYPE;	// = 35
 #pragma pack(pop)
 
 
 typedef struct
 {
-	int8_t 	sensor_error[4];
-	uint8_t uart_error;
-	uint8_t flash_error;
+	int8_t 	sensor_status[4];
+	uint8_t uart_status;
+	uint8_t flash_status;
+	uint8_t watchdog_status;
 } str_bit;
 
 

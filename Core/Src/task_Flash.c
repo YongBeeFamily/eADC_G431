@@ -15,6 +15,8 @@ extern DMA_HandleTypeDef hdma_usart1_tx;
 
 extern BMP581_DEV sensor[4];
 
+void ReturnAppSettings(void);
+
 Str_uart_rx RxCali;
 APP_SETTINGS AppSettings;
 uint8_t RxBuf[100] = {0,};
@@ -126,12 +128,12 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 			}
 		}
 
+		ReturnAppSettings();
 		HAL_UARTEx_ReceiveToIdle_DMA(&huart1, RxBuf, sizeof(RxBuf));
 		__HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
 	}
 }
 
-uint8_t tempBuf[100];
 
 void task_Flash(void const * argument)
 {
@@ -153,6 +155,7 @@ void task_Flash(void const * argument)
 	    pRead[i] = *(uint8_t *)(USER_DATA_ADDR + i);
 	}
 
+	ReturnAppSettings();
 
 	for(;;)
 	{
@@ -160,6 +163,28 @@ void task_Flash(void const * argument)
 		vTaskDelayUntil(&xLastWakeTime, xFrequency);
 	}
 }
+uint8_t tempBuf[100] = {0,};
+void ReturnAppSettings(void)
+{
 
+	uint8_t Checksum = 0;
+
+	memset((void*)&RxCali, 0, sizeof(RxCali));
+	RxCali.HEADER1 = HEADER_ADS2OFP2;
+	RxCali.HEADER2 = HEADER_ADS2OFP3;
+
+	memcpy((void*)&RxCali.data[0], (void*)&AppSettings.CORRECTIONPRESSUREVALUE, sizeof(float));
+	memcpy((void*)&RxCali.SERIALNO[0], (void*)&AppSettings.SERIALNO[0], sizeof(AppSettings.SERIALNO));
+
+	memcpy(&tempBuf[0], & RxCali, sizeof(RxCali));
+
+	for(int i = 2; i < sizeof(RxCali)-1; i++)
+	{
+		Checksum ^=  tempBuf[i];
+	}
+	tempBuf[sizeof(RxCali) - 1] = Checksum;
+
+	HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&tempBuf, sizeof(RxCali));
+}
 
 
