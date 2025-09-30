@@ -1,0 +1,6 @@
+../Core/Src/task_ISS2ADS.c:39:15:Calib_Volt2PS	72	static
+../Core/Src/task_ISS2ADS.c:74:14:Calib_Volt2PT	64	static
+../Core/Src/task_ISS2ADS.c:115:7:VerticalPress_avg_func	24	static
+../Core/Src/task_ISS2ADS.c:131:7:VerticalSpeed_avg_func	24	static
+../Core/Src/task_ISS2ADS.c:153:6:ADS2OFP_DATA	24	static
+../Core/Src/task_ISS2ADS.c:196:6:task_ISS2ADS	24	static

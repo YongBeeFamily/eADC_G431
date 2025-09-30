@@ -1,0 +1,8 @@
+../Application/modules/modules/common.c:33:20:bmp5_i2c_read	1
+../Application/modules/modules/common.c:47:20:bmp5_i2c_write	1
+../Application/modules/modules/common.c:60:20:bmp5_spi_read	1
+../Application/modules/modules/common.c:73:20:bmp5_spi_write	1
+../Application/modules/modules/common.c:86:6:bmp5_delay_us	1
+../Application/modules/modules/common.c:95:6:bmp5_error_codes_print_result	9
+../Application/modules/modules/common.c:139:8:bmp5_interface_init	3
+../Application/modules/modules/common.c:168:6:bmp5_coines_deinit	1

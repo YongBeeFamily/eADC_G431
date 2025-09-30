@@ -16,7 +16,7 @@
 
 BMP581_DEV sensor[4];
 uint8_t bmp581_status;
-LOG_DATA_TYPE LOGData;
+
 
 void Adc_avg_func(uint8_t ch, float value);
 
@@ -26,8 +26,8 @@ volatile float ADC_r[ADC_MAX][ADC_AVG_CNT];
 
 extern I2C_HandleTypeDef hi2c1;
 extern I2C_HandleTypeDef hi2c2;
-
-
+extern IWDG_HandleTypeDef hiwdg;
+int WDG_count = 0;
 
 void task_BMP2ADS(void const *argument) {
 	/* USER CODE BEGIN task_BMP2ADS */
@@ -59,8 +59,13 @@ void task_BMP2ADS(void const *argument) {
 				}
 			}
 		}
-		LOGData.BMP581_FATALERROR_CODE = bmp581_status;
+
 		vTaskDelayUntil(&xLastWakeTime, 20);	// 50Hz
+
+		if (++WDG_count >= 50) {
+			WDG_count = 0;
+			HAL_IWDG_Refresh(&hiwdg);
+		}
 
 
 		LED_TOGGLE();
