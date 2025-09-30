@@ -228,11 +228,11 @@ void task_ISS2ADS(void const * argument)
 
 	if(huart1.gState == HAL_UART_STATE_READY)
 	{
-		PBIT.uart_status = 1;
+		PBIT.uart_status = 0;
 	}
 	else
 	{
-		PBIT.uart_status = 0;
+		PBIT.uart_status = 1;
 	}
 
 	/* Infinite loop */

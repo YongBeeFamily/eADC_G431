@@ -69,11 +69,11 @@ void task_BMP2ADS(void const *argument) {
 
 			if (__HAL_RCC_GET_FLAG(RCC_FLAG_IWDGRST))
 			{
-				PBIT.watchdog_status = 1;
+				PBIT.watchdog_status = 0;
 			}
 			else
 			{
-				PBIT.watchdog_status = 0;
+				PBIT.watchdog_status = 1;
 			}
 		}
 

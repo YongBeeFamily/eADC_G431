@@ -8191,17 +8191,17 @@ void task_BMP2ADS(void const *argument) {
  8003806:	2b00      	cmp	r3, #0
  8003808:	d003      	beq.n	8003812 <task_BMP2ADS+0x12a>
 			{
-				PBIT.watchdog_status = 1;
+				PBIT.watchdog_status = 0;
  800380a:	4b0c      	ldr	r3, [pc, #48]	@ (800383c <task_BMP2ADS+0x154>)
- 800380c:	2201      	movs	r2, #1
+ 800380c:	2200      	movs	r2, #0
  800380e:	719a      	strb	r2, [r3, #6]
  8003810:	e002      	b.n	8003818 <task_BMP2ADS+0x130>
 			}
 			else
 			{
-				PBIT.watchdog_status = 0;
+				PBIT.watchdog_status = 1;
  8003812:	4b0a      	ldr	r3, [pc, #40]	@ (800383c <task_BMP2ADS+0x154>)
- 8003814:	2200      	movs	r2, #0
+ 8003814:	2201      	movs	r2, #1
  8003816:	719a      	strb	r2, [r3, #6]
 			}
 		}
@@ -9809,17 +9809,17 @@ void task_ISS2ADS(void const * argument)
  80044a2:	2b20      	cmp	r3, #32
  80044a4:	d103      	bne.n	80044ae <task_ISS2ADS+0x32>
 	{
-		PBIT.uart_status = 1;
+		PBIT.uart_status = 0;
  80044a6:	4b09      	ldr	r3, [pc, #36]	@ (80044cc <task_ISS2ADS+0x50>)
- 80044a8:	2201      	movs	r2, #1
+ 80044a8:	2200      	movs	r2, #0
  80044aa:	711a      	strb	r2, [r3, #4]
  80044ac:	e002      	b.n	80044b4 <task_ISS2ADS+0x38>
 	}
 	else
 	{
-		PBIT.uart_status = 0;
+		PBIT.uart_status = 1;
  80044ae:	4b07      	ldr	r3, [pc, #28]	@ (80044cc <task_ISS2ADS+0x50>)
- 80044b0:	2200      	movs	r2, #0
+ 80044b0:	2201      	movs	r2, #1
  80044b2:	711a      	strb	r2, [r3, #4]
 	}
 
