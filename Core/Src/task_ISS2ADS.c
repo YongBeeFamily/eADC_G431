@@ -27,40 +27,74 @@ uint32_t operationTime;
 
 #define TemperatureComrrection
 
-// 온도보정 : 약 -7m 오차 보정
-static double CAL_C0 = 0.0;      // 상수 편향 (m) — 초기엔 0
-static double CAL_C1 = 0.7;     // 온도 계수 (m / °C) -> 관측치 기반
-const double T_REF = 24.0;       // 기준 온도 (°C)
+// 온도보정 기본값 (원래 있던 값들)
+static double aCAL_C0 = 0.0;      // 상수 편향 (m)
+static double aCAL_C1 = 0.7;      // 온도 계수 (m / °C)
+const double aT_REF = 24.0;       // 기준 온도 (°C)
+
 // ℎ_𝑓𝑙𝑡 상수값
-#define PSL_EXPONENT			0.190255
-#define HFLT_COEF				(4.4308 * powf(10,4))
-#define HFLT_PSL				101325.0	// Pa
-// Altitude : ℎ_𝑓𝑙𝑡=4.4308 × 10^4  [ 1 −  (𝑃_𝑓𝑙𝑡/𝑃_𝑆𝐿 )^0.190255 ]
+#define PSL_EXPONENT            0.190255
+#define HFLT_COEF               (4.4308 * pow(10.0,4))  // 44308.0
+#define HFLT_PSL                101325.0                // Pa
+
 static double Calib_Volt2PS(float psRaw)
 {
-	double altitude;
-	double psDiff = (psRaw / HFLT_PSL);
-	double psPowf = powf(psDiff, PSL_EXPONENT);
+    double altitude;
+    double psPa = (double)psRaw;
 
-	altitude = HFLT_COEF * fabs(1 - psPowf);
+    // ---------- 1) 단위 검사: psRaw가 hPa로 들어오는 경우 대비 ----------
+    if (psPa < 2000.0) { // 보통 hPa 값은 1000~1100 범위
+        psPa *= 100.0;   // hPa -> Pa
+    }
 
-// 센서 온도 보정 ************************************
-	if (altitude < 5000.0)
-	{
-		altitude *= 1.000568;
-		altitude = ((5000 - altitude) * 0.0002) + altitude;
-	} else {
-		altitude *= 1.00033;
-	}
+    // ---------- 2) 기본 고도 계산 ----------
+    double psDiff = (psPa / HFLT_PSL);
+    double psPowf = pow(psDiff, PSL_EXPONENT);
+    altitude = HFLT_COEF * fabs(1.0 - psPowf); // 보정 전 고도 (m)
 
+    // ---------- 3) altitude 기반 스케일 보정 (선형 보간: 0m->coef1, 5000m->coef2) ----------
+    double alt1 = 0.0;
+    double alt2 = 5000.0;
+    double coef1 = 1.0006;    // 저고도 보정계수 (예시, 필요시 조정)
+    double coef2 = 1.00033;   // 고고도 보정계수 (예시, 필요시 조정)
+
+    double scale;
+    if (altitude <= alt1) {
+        scale = coef1;
+    } else if (altitude >= alt2) {
+        scale = coef2;
+    } else {
+        scale = coef1 + (altitude - alt1) * (coef2 - coef1) / (alt2 - alt1);
+    }
+    altitude *= scale;
 
 #ifdef TemperatureComrrection
-    double dT = (double)ADC_Val_avg[ENUM_TEMP_STATIC] - T_REF;
-    double err = CAL_C0 + CAL_C1 * dT;   // 예측 오차 (m)
-    double altitude_corr = altitude - err;
+    // ---------- 4) 온도 보정량 계산 (기존 선형식: CAL_C0 + CAL_C1 * dT) ----------
+    double temp = (double)ADC_Val_avg[ENUM_TEMP_STATIC]; // 현재 온도 (°C)
+    double dT = temp - aT_REF;
+    double temp_err = aCAL_C0 + aCAL_C1 * dT; // 온도에 따른 예측 오차 (m), 전체 적용량
+
+    // ---------- 5) 고도에 따른 온도 보정 적용 비율 (선형) ----------
+    // 고도 0 근처에서는 보정 0 (적용 안 함), 고도 5000m 이상에서는 보정 100% 적용
+    double corr_alt_min = 0.0;      // 보정 시작 고도 (여기서는 0m에서 0%)
+    double corr_alt_max = 5000.0;   // 보정이 완전 적용되는 고도 (5000m에서 100%)
+
+    double corr_factor;
+    if (altitude <= corr_alt_min) {
+        corr_factor = 0.0;
+    } else if (altitude >= corr_alt_max) {
+        corr_factor = 1.0;
+    } else {
+        corr_factor = (altitude - corr_alt_min) / (corr_alt_max - corr_alt_min); // 선형 보간 0..1
+    }
+
+    // ---------- 6) 최종 보정 적용 ----------
+    double total_err = corr_factor * temp_err;   // 적용 비율을 곱해 점진적 보정
+    double altitude_corr = altitude - total_err;
 
     return altitude_corr;
 #else
+    // TemperatureComrrection이 정의되지 않으면 온도 보정 안 함
     return altitude;
 #endif
 }
@@ -68,41 +102,100 @@ static double Calib_Volt2PS(float psRaw)
 
 
 
+
 // 𝑉_𝐼𝐴𝑆 상수값
-#define STANDARD_AIR_DENSITY	101.325	// kPa
-// Velocity : 𝑉_𝐼𝐴𝑆=√((2 ∆𝑃)/𝜌_0 )
+// 주의: STANDARD_AIR_DENSITY는 여기서 kPa 단위(101.325 kPa)로 적어두었으나,
+// 실제 식에서는 ΔP와 ρ 단위가 일치해야 합니다. (아래 구현은 ΔP를 kPa 단위로 사용)
+#define STANDARD_AIR_DENSITY    101.325   // kPa  (주의: 단위 일관성 확인 권장)
+const double sT_REF = 24.0;     // 기준 온도 (°C)
+static double sCAL_C0 = 0.0;    // 온도 보정 상수 (사용자 정의)
+static double sCAL_C1 = 0.7;    // 온도 계수 (단위: speed per °C — 필요 시 조정)
+
+// Velocity : 𝑉_𝐼𝐴𝑆 = sqrt((2 * ΔP) / ρ_0)  (단위 일치 필요)
 static float Calib_Volt2PT(float psRaw, float ptRaw)
 {
-	double velo, rootValue;
-	double ptpsDiff = ptRaw - psRaw;
-	ptpsDiff *= 1000.0;	// Pa -> kPa
+    double velo;
+    double ptpsDiff = (double)ptRaw - (double)psRaw;
 
-	rootValue = fabs((2*ptpsDiff) / STANDARD_AIR_DENSITY);
-	velo = sqrt(rootValue);
+    // -------------------------
+    // 단위 주의:
+    // - 만약 psRaw/ptRaw가 kPa 단위이면 여기서 추가 변환 불필요
+    // - 만약 psRaw/ptRaw가 Pa 단위이면 아래에서 kPa로 변환(나누기 1000)하거나
+    //   STANDARD_AIR_DENSITY를 Pa 단위로 바꿔야 합니다.
+    //
+    // (원래 코드에서 ptpsDiff *= 1000.0; 로 변환했는데 주석과 혼동이 있어 제거함.
+    //  단위가 Pa인지 kPa인지 확실하면 해당 줄을 복원/수정하세요.)
+    // -------------------------
 
-// 센서 온도 보정 ***************************************
-	if (velo < 390.0)
-	{
-		velo *= pow(1.013779, 2);
-		velo += (390.0 - velo) * 0.0028;
+    // 절대값 사용 (정압보다 정압계가 낮은 경우 음수 방지)
+    double deltaP = fabs(ptpsDiff); // 단위: (센서 단위 — 일관성 필요)
 
-		return velo;
-	} else {
-		velo *= pow(1.008169, 2);
+    // 예전 코드 구조를 살려 "rootValue" 계산 (단위 일치 전제)
+    double rootValue = fabs((2.0 * deltaP) / STANDARD_AIR_DENSITY);
+    velo = sqrt(rootValue);
+
+    // -------------------------
+    // 1) 속도 기반 스케일 보정 (선형 보간)
+    //    - 저속(예: 0)에서 약간의 보정계수 coef_low
+    //    - 고속(예: 390 이상)에서 coef_high
+    //    이 구간 내에서 선형 보간 적용 (계수는 실측치로 튜닝)
+    // -------------------------
+    double speed1 = 0.0;
+    double speed2 = 390.0; // 기존 분기값을 참고하여 전 구간 보정 최대값으로 설정
+    double coef_low = pow(1.013779, 2);  // 기존 저속계수 (원래 코드에서 사용)
+    double coef_high = pow(1.008169, 2); // 기존 고속계수 (원래 코드에서 사용)
+
+    double scale;
+    if (velo <= speed1) {
+        scale = coef_low;
+    } else if (velo >= speed2) {
+        scale = coef_high;
+    } else {
+        scale = coef_low + (velo - speed1) * (coef_high - coef_low) / (speed2 - speed1);
+    }
+    double velo_scaled = velo * scale;
 
 #ifdef TemperatureComrrection
-    double dT = (double)ADC_Val_avg[ENUM_TEMP_STATIC] - T_REF;
-    double err = CAL_C0 + CAL_C1 * dT;   // 예측 오차 (m)
-    double speed_corr = velo - err;
+    // -------------------------
+    // 2) 온도 보정량 계산 (기존 선형식 사용)
+    //    temp_err는 "속도 단위로의 오차"를 나타낸다고 가정
+    // -------------------------
+    double temp = (double)ADC_Val_avg[ENUM_TEMP_STATIC];
+    double dT = temp - sT_REF;
+    double temp_err = sCAL_C0 + sCAL_C1 * dT; // (단위: same as velo, 조정 필요)
 
-    return speed_corr;
+    // -------------------------
+    // 3) 속도에 따른 온도보정 적용 비율 (선형)
+    //    - 속도 <= corr_speed_min  : 보정 0%
+    //    - 속도 >= corr_speed_max  : 보정 100%
+    //    - 그 사이는 선형적으로 확대
+    // -------------------------
+    double corr_speed_min = 0.0;    // 보정 시작 속도 (예: 0 m/s)
+    double corr_speed_max = 390.0;  // 보정이 완전 적용되는 속도 (예: 390 m/s)
+
+    double corr_factor;
+    if (velo_scaled <= corr_speed_min) {
+        corr_factor = 0.0;
+    } else if (velo_scaled >= corr_speed_max) {
+        corr_factor = 1.0;
+    } else {
+        corr_factor = (velo_scaled - corr_speed_min) / (corr_speed_max - corr_speed_min);
+    }
+
+    // -------------------------
+    // 4) 최종 보정 적용
+    //    - 온도에 따른 보정량(temp_err)을 corr_factor로 스케일
+    // -------------------------
+    double total_err = corr_factor * temp_err;
+    double speed_corr = velo_scaled - total_err;
+
+    return (float)speed_corr;
 #else
-    return velo;
+    // TemperatureComrrection이 정의되지 않은 경우 변환된 속도만 반환
+    return (float)velo_scaled;
 #endif
-	}
-
-
 }
+
 
 
 
