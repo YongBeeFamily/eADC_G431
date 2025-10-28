@@ -46,21 +46,47 @@ float uint64_t2Float(uint64_t data)
 	return z.f[0];
 }
 
+// Write a buffer to flash in double-word (8-byte) units and verify the write.
+void Flash_WriteBuffer(uint32_t address, const void *buffer, uint32_t size)
+{
+    const uint8_t *pData = (const uint8_t *)buffer;
+    HAL_FLASH_Unlock();
+    for (uint32_t i = 0; i < size; i += 8) // G4는 Double Word(8바이트) 단위 쓰기
+    {
+        uint64_t data64 = 0;
+        uint32_t remain = size - i;
+        if (remain >= 8) {
+            memcpy(&data64, pData + i, sizeof(uint64_t));
+        } else {
+            uint8_t tmp[8];
+            for (uint32_t k = 0; k < 8; k++) tmp[k] = 0xFF; // erased flash is 0xFF
+            memcpy(tmp, pData + i, remain);
+            memcpy(&data64, tmp, sizeof(uint64_t));
+        }
+        if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, address + i, data64) != HAL_OK) {
+            // failed to program; stop further writes
+            break;
+        }
+    }
+    HAL_FLASH_Lock();
 
-void Flash_Write(uint32_t address, uint64_t data) {
-//    HAL_FLASH_Unlock();
-//    HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, address, data);
-//    HAL_FLASH_Lock();
+    // Verify (only supports sizes up to APP_SETTINGS for simplicity)
+    if (size <= sizeof(APP_SETTINGS)) {
+        uint8_t tmp[sizeof(APP_SETTINGS)];
+        Flash_ReadBuffer(address, tmp, size);
+        if (memcmp(tmp, buffer, size) != 0) {
+            // verification failed - you could set an error flag or retry
+        }
+    }
+}
 
-	uint8_t *pData = (uint8_t *)&AppSettings;
-	HAL_FLASH_Unlock();
-	for (uint32_t i = 0; i < sizeof(APP_SETTINGS); i += 8) // G4는 Double Word(8바이트) 단위 쓰기
-	{
-	    uint64_t data64 = 0;
-	    memcpy(&data64, pData + i, sizeof(uint64_t));
-	    HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, USER_DATA_ADDR + i, data64);
+// new helper: read buffer from flash
+void Flash_ReadBuffer(uint32_t address, void *buffer, uint32_t size)
+{
+	uint8_t *pDst = (uint8_t *)buffer;
+	for (uint32_t i = 0; i < size; i++) {
+		pDst[i] = *(uint8_t *)(address + i);
 	}
-	HAL_FLASH_Lock();
 }
 
 uint8_t Flash_Read(uint32_t address) {
@@ -77,7 +103,9 @@ void Flash_Erase_Page(uint32_t pageAddress) {
     EraseInitStruct.Page      = (pageAddress - FLASH_BASE) / FLASH_PAGE_SIZE;
     EraseInitStruct.NbPages   = 1;
 
-    HAL_FLASHEx_Erase(&EraseInitStruct, &PageError);
+    if (HAL_FLASHEx_Erase(&EraseInitStruct, &PageError) != HAL_OK) {
+        // optionally handle erase error
+    }
 
     HAL_FLASH_Lock();
 }
@@ -102,10 +130,20 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 			if (checksum == 0)
 			{
 				tempFloat = (float)RxCali.data[0];
-				AppSettings.CORRECTIONPRESSUREVALUE = sensor[0].sensor_data.pressure - (tempFloat*100);
+				if (tempFloat < 1.0)
+				{
+					tempFloat = 1013.25f;
+					AppSettings.CORRECTIONPRESSUREVALUE = sensor[0].sensor_data.pressure - (tempFloat*100);
+				}
+				else
+				{
+					AppSettings.CORRECTIONPRESSUREVALUE = tempFloat;
+				}
+
 
 				Flash_Erase_Page(USER_DATA_ADDR);
-				Flash_Write(USER_DATA_ADDR, (uint64_t)&AppSettings);
+				// write the whole AppSettings structure to flash
+				Flash_WriteBuffer(USER_DATA_ADDR, &AppSettings, sizeof(AppSettings));
 			}
 		}
 		else if ((RxBuf[0] == 'L') && (RxBuf[1] == 'H'))
@@ -120,11 +158,14 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 
 			if (checksum == 0)
 			{
-				memset((void *)AppSettings.SERIALNO, 0, sizeof(AppSettings.SERIALNO));
-				strcpy((char *)AppSettings.SERIALNO, (char *)RxCali.SERIALNO);
+				if (RxCali.SERIALNO[0] != 0)
+				{
+					memset((void *)AppSettings.SERIALNO, 0, sizeof(AppSettings.SERIALNO));
+					strcpy((char *)AppSettings.SERIALNO, (char *)RxCali.SERIALNO);
+				}
 
 				Flash_Erase_Page(USER_DATA_ADDR);
-				Flash_Write(USER_DATA_ADDR, (uint64_t)&AppSettings);
+				Flash_WriteBuffer(USER_DATA_ADDR, &AppSettings, sizeof(AppSettings));
 			}
 		}
 
@@ -149,12 +190,24 @@ void task_Flash(void const * argument)
 	HAL_UARTEx_ReceiveToIdle_DMA(&huart1, RxBuf, sizeof(RxBuf));
 	__HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
 
-	uint8_t *pRead = (uint8_t *)&AppSettings;
-	for (uint32_t i = 0; i < sizeof(APP_SETTINGS); i++)
-	{
-	    pRead[i] = *(uint8_t *)(USER_DATA_ADDR + i);
+	// Read saved settings from flash into AppSettings
+	Flash_ReadBuffer(USER_DATA_ADDR, (void *)&AppSettings, sizeof(AppSettings));
+
+	// Validate signature; if invalid, initialize defaults and write to flash
+	if (AppSettings.signature != APP_SETTINGS_MAGIC) {
+		// initialize default settings
+		memset(&AppSettings, 0x00, sizeof(AppSettings));
+		AppSettings.signature = APP_SETTINGS_MAGIC;
+		AppSettings.CORRECTIONPRESSUREVALUE = DEFAULT_CORRECTIONPRESSUREVALUE;
+		// optional: default serial blank
+		memset(AppSettings.SERIALNO, 0, sizeof(AppSettings.SERIALNO));
+
+		// persist defaults
+		Flash_Erase_Page(USER_DATA_ADDR);
+		Flash_WriteBuffer(USER_DATA_ADDR, &AppSettings, sizeof(AppSettings));
 	}
 
+	osDelay(2000);
 	ReturnAppSettings();
 
 	for(;;)
@@ -186,5 +239,3 @@ void ReturnAppSettings(void)
 
 	HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&tempBuf, sizeof(RxCali));
 }
-
-

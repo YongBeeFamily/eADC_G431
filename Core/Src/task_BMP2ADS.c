@@ -27,7 +27,11 @@ volatile float ADC_r[ADC_MAX][ADC_AVG_CNT];
 extern I2C_HandleTypeDef hi2c1;
 extern I2C_HandleTypeDef hi2c2;
 extern IWDG_HandleTypeDef hiwdg;
-int WDG_count = 0;
+// watchdog feed timing: use time-based feeding to avoid counter drift if loop is delayed
+// safer margin: feed every 800 ms (IWDG configured ~1.25s timeout)
+#define WDG_FEED_PERIOD_MS 800
+
+static TickType_t last_wdg_feed = 0;
 
 str_bit CBIT, IBIT, PBIT;
 
@@ -61,20 +65,19 @@ void task_BMP2ADS(void const *argument) {
 			}
 		}
 
-		vTaskDelayUntil(&xLastWakeTime, 20);	// 50Hz
+		vTaskDelayUntil(&xLastWakeTime, 20);	// ~50Hz nominal
 
-		if (++WDG_count >= 50) {
-			WDG_count = 0;
+		// Time-based watchdog refresh: safer than counting loop iterations
+		if (last_wdg_feed == 0) {
+			// initialize on first run
+			last_wdg_feed = xTaskGetTickCount();
+		}
+
+		if ((xTaskGetTickCount() - last_wdg_feed) >= pdMS_TO_TICKS(WDG_FEED_PERIOD_MS)) {
+			// update timestamp BEFORE refresh to reduce skew if refresh takes time
+			last_wdg_feed = xTaskGetTickCount();
 			HAL_IWDG_Refresh(&hiwdg);
-
-			if (__HAL_RCC_GET_FLAG(RCC_FLAG_IWDGRST))
-			{
-				PBIT.watchdog_status = 0;
-			}
-			else
-			{
-				PBIT.watchdog_status = 1;
-			}
+			// if you want to check reset flag, do it once at boot instead of periodically
 		}
 
 

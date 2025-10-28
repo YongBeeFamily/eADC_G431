@@ -1,8 +1,9 @@
 ../Core/Src/task_Flash.c:25:10:Float2uint64_t	1
 ../Core/Src/task_Flash.c:37:7:uint64_t2Float	1
-../Core/Src/task_Flash.c:50:6:Flash_Write	2
-../Core/Src/task_Flash.c:66:9:Flash_Read	1
-../Core/Src/task_Flash.c:70:6:Flash_Erase_Page	1
-../Core/Src/task_Flash.c:85:6:HAL_UARTEx_RxEventCallback	10
-../Core/Src/task_Flash.c:138:6:task_Flash	2
-../Core/Src/task_Flash.c:167:6:ReturnAppSettings	2
+../Core/Src/task_Flash.c:50:6:Flash_WriteBuffer	6
+../Core/Src/task_Flash.c:84:6:Flash_ReadBuffer	2
+../Core/Src/task_Flash.c:92:9:Flash_Read	1
+../Core/Src/task_Flash.c:96:6:Flash_Erase_Page	1
+../Core/Src/task_Flash.c:113:6:HAL_UARTEx_RxEventCallback	12
+../Core/Src/task_Flash.c:179:6:task_Flash	2
+../Core/Src/task_Flash.c:220:6:ReturnAppSettings	2

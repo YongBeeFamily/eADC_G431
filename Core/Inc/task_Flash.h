@@ -15,7 +15,10 @@
 
 #define DEFAULT_CORRECTIONPRESSUREVALUE		75.0f
 
+#define APP_SETTINGS_MAGIC 0xA5A55A5A
+ 
 typedef struct {
+    uint32_t signature; // should be APP_SETTINGS_MAGIC when valid
 	uint8_t SERIALNO[32];
 	float CORRECTIONPRESSUREVALUE;
 } APP_SETTINGS;

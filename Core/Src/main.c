@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "app_config.h"  // for str_bit definition
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -54,6 +55,8 @@ osThreadId bmp2adsTaskHandle;
 osThreadId iss2adsTaskHandle;
 osThreadId flashTaskHandle;
 /* USER CODE BEGIN PV */
+
+extern str_bit CBIT, IBIT, PBIT; // share status bits (defined in task_BMP2ADS.c)
 
 /* USER CODE END PV */
 
@@ -113,6 +116,16 @@ int main(void)
   MX_I2C2_Init();
   MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
+
+  // Boot-time: set watchdog status flag in PBIT and then clear reset flags
+  // Mapping kept as existing convention: 1 = normal (no watchdog reset), 0 = watchdog caused last reset
+  if (__HAL_RCC_GET_FLAG(RCC_FLAG_IWDGRST)) {
+      PBIT.watchdog_status = 1; // watchdog caused last reset
+  } else {
+      PBIT.watchdog_status = 0; // no watchdog reset
+  }
+  // Clear sticky reset flags so next boot reflects new reset causes only
+  __HAL_RCC_CLEAR_RESET_FLAGS();
 
   /* USER CODE END 2 */
 
