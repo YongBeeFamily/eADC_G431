@@ -32,14 +32,14 @@ Core/Src/task_BMP2ADS.o: ../Core/Src/task_BMP2ADS.c \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h \
- E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/config/app_config.h \
+ C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/bmp5.h \
+ C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/../../../Application/include/drivers/bmp5_defs.h \
+ C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/config/app_config.h \
  ../Core/Inc/main.h \
- E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/modules/module_bmp581.h \
- E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/bmp5.h \
- E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/../../../Application/include/drivers/bmp5_defs.h \
- E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/bmp5_defs.h \
- E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/modules/common.h \
- E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/modules/../../../Application/include/drivers/bmp5.h \
+ C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/modules/module_bmp581.h \
+ C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/bmp5_defs.h \
+ C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/modules/common.h \
+ C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/modules/../../../Application/include/drivers/bmp5.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
@@ -57,7 +57,8 @@ Core/Src/task_BMP2ADS.o: ../Core/Src/task_BMP2ADS.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h \
- ../Core/Inc/task_Flash.h
+ ../Core/Inc/task_Flash.h \
+ C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/utils/delay.h
 ../Core/Inc/task_BMP2ADS.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
@@ -92,14 +93,14 @@ Core/Src/task_BMP2ADS.o: ../Core/Src/task_BMP2ADS.c \
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h:
-E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/config/app_config.h:
+C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/bmp5.h:
+C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/../../../Application/include/drivers/bmp5_defs.h:
+C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/config/app_config.h:
 ../Core/Inc/main.h:
-E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/modules/module_bmp581.h:
-E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/bmp5.h:
-E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/../../../Application/include/drivers/bmp5_defs.h:
-E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/bmp5_defs.h:
-E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/modules/common.h:
-E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/modules/../../../Application/include/drivers/bmp5.h:
+C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/modules/module_bmp581.h:
+C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/drivers/bmp5_defs.h:
+C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/modules/common.h:
+C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/modules/../../../Application/include/drivers/bmp5.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
@@ -118,3 +119,4 @@ E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/mod
 ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h:
 ../Core/Inc/task_Flash.h:
+C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/utils/delay.h:

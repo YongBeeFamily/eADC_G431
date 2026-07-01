@@ -18,4 +18,11 @@
 #define BME581_COUNT		4
 
 
+void bmp581_init(BMP581_DEV *sensor);
+
+
+
+int8_t get_data(BMP581_DEV *sensor);
+
+
 #endif /* INCLUDE_MODULES_MODULE_BMP581_H_ */

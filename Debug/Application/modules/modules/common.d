@@ -1,6 +1,7 @@
 Application/modules/modules/common.o: \
- ../Application/modules/modules/common.c ../Core/Inc/main.h \
- ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
+ ../Application/modules/modules/common.c \
+ C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/utils/delay.h \
+ ../Core/Inc/main.h ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
  ../Core/Inc/stm32g4xx_hal_conf.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_def.h \
@@ -33,6 +34,7 @@ Application/modules/modules/common.o: \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h \
  ../Application/modules/modules/../../../Application/include/drivers/bmp5_defs.h
+C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/utils/delay.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
 ../Core/Inc/stm32g4xx_hal_conf.h:

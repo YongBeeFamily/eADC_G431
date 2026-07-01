@@ -1,2 +1,2 @@
-../Core/Src/task_BMP2ADS.c:38:6:task_BMP2ADS	6
-../Core/Src/task_BMP2ADS.c:90:6:Adc_avg_func	4
+../Core/Src/task_BMP2ADS.c:40:6:task_BMP2ADS	6
+../Core/Src/task_BMP2ADS.c:92:6:Adc_avg_func	4

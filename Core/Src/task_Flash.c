@@ -8,6 +8,10 @@
 #include "cmsis_os.h"
 #include "app_config.h"
 #include "module_bmp581.h"
+#include "stdio.h"
+
+#include <string.h>
+
 
 extern UART_HandleTypeDef huart1;
 extern DMA_HandleTypeDef hdma_usart1_rx;
@@ -21,6 +25,8 @@ Str_uart_rx RxCali;
 APP_SETTINGS AppSettings;
 uint8_t RxBuf[100] = {0,};
 extern str_bit CBIT, IBIT, PBIT;
+
+void Flash_ReadBuffer(uint32_t address, void *buffer, uint32_t size);
 
 uint64_t Float2uint64_t(float fData)
 {
@@ -113,7 +119,7 @@ void Flash_Erase_Page(uint32_t pageAddress) {
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
 	uint8_t checksum = 0;
-	float tempFloat;
+	float tempFloat, tempFloat2;
 	uint64_t temp64;
 
 	if  (huart->Instance == USART1)
@@ -130,16 +136,18 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 			if (checksum == 0)
 			{
 				tempFloat = (float)RxCali.data[0];
-				if (tempFloat < 1.0)
-				{
-					tempFloat = 1013.25f;
-					AppSettings.CORRECTIONPRESSUREVALUE = sensor[0].sensor_data.pressure - (tempFloat*100);
-				}
-				else
-				{
-					AppSettings.CORRECTIONPRESSUREVALUE = tempFloat;
-				}
-
+				tempFloat2 = (float)RxCali.data[1];
+//				if (tempFloat < 1.0)
+//				{
+//					tempFloat = 1013.25f;
+//					AppSettings.CORRECTIONPRESSUREVALUE = sensor[0].sensor_data.pressure - (tempFloat*100);
+//				}
+//				else
+//				{
+//					AppSettings.CORRECTIONPRESSUREVALUE = tempFloat;
+//				}
+				AppSettings.CORRECTIONPRESSUREVALUE = tempFloat;
+				AppSettings.CORRECTIONPRESSUREVALUE2 = tempFloat2;
 
 				Flash_Erase_Page(USER_DATA_ADDR);
 				// write the whole AppSettings structure to flash
@@ -199,6 +207,7 @@ void task_Flash(void const * argument)
 		memset(&AppSettings, 0x00, sizeof(AppSettings));
 		AppSettings.signature = APP_SETTINGS_MAGIC;
 		AppSettings.CORRECTIONPRESSUREVALUE = DEFAULT_CORRECTIONPRESSUREVALUE;
+		AppSettings.CORRECTIONPRESSUREVALUE2 = DEFAULT_CORRECTIONPRESSUREVALUE;
 		// optional: default serial blank
 		memset(AppSettings.SERIALNO, 0, sizeof(AppSettings.SERIALNO));
 
@@ -227,6 +236,7 @@ void ReturnAppSettings(void)
 	RxCali.HEADER2 = HEADER_ADS2OFP3;
 
 	memcpy((void*)&RxCali.data[0], (void*)&AppSettings.CORRECTIONPRESSUREVALUE, sizeof(float));
+	memcpy((void*)&RxCali.data[1], (void*)&AppSettings.CORRECTIONPRESSUREVALUE2, sizeof(float));
 	memcpy((void*)&RxCali.SERIALNO[0], (void*)&AppSettings.SERIALNO[0], sizeof(AppSettings.SERIALNO));
 
 	memcpy(&tempBuf[0], & RxCali, sizeof(RxCali));

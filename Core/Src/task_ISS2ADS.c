@@ -12,6 +12,9 @@
 #include "module_bmp581.h"
 #include "alt_speed.h"
 
+#include <string.h>
+
+
 extern UART_HandleTypeDef huart1;
 static uint8_t ADS2OFP_Buff[256];
 
@@ -107,15 +110,16 @@ static double Calib_Volt2PS(float psRaw)
 // 주의: STANDARD_AIR_DENSITY는 여기서 kPa 단위(101.325 kPa)로 적어두었으나,
 // 실제 식에서는 ΔP와 ρ 단위가 일치해야 합니다. (아래 구현은 ΔP를 kPa 단위로 사용)
 #define STANDARD_AIR_DENSITY    101.325   // kPa  (주의: 단위 일관성 확인 권장)
-const double sT_REF = 24.0;     // 기준 온도 (°C)
-static double sCAL_C0 = 0.0;    // 온도 보정 상수 (사용자 정의)
-static double sCAL_C1 = 0.7;    // 온도 계수 (단위: speed per °C — 필요 시 조정)
+double sT_REF = 24.0;     // 기준 온도 (°C)
+double sCAL_C0 = 0.0;    // 온도 보정 상수 (사용자 정의)
+double sCAL_C1 = 0.7;    // 온도 계수 (단위: speed per °C — 필요 시 조정)
 
 // Velocity : 𝑉_𝐼𝐴𝑆 = sqrt((2 * ΔP) / ρ_0)  (단위 일치 필요)
 static float Calib_Volt2PT(float psRaw, float ptRaw)
 {
     double velo;
     double ptpsDiff = (double)ptRaw - (double)psRaw;
+    ptpsDiff *= 1000.0;	// Pa -> kPa
 
     // -------------------------
     // 단위 주의:
@@ -255,12 +259,16 @@ void ADS2OFP_DATA(void)
   ICD_eADC2OFP.AirPosVel.Velocity						= (float)(Calib_Volt2PT(ADC_Val_avg[ENUM_PRESS_STATIC], ADC_Val_avg[ENUM_PRESS_DIFF]));
 
 /**************************** Vertical Speed Calculate Start ****************************/
-  deltaTime = HAL_GetTick() - preTime;
-  preTime = HAL_GetTick();
+  deltaTime = xTaskGetTickCount() - preTime;
+  preTime = xTaskGetTickCount();
   verticalSpeed = ((ICD_eADC2OFP.AirPosVel.Altitude - preAlt) / (deltaTime/1000.0)) * 3.6;
   preAlt = ICD_eADC2OFP.AirPosVel.Altitude;
 
-  ICD_eADC2OFP.AirPosVel.VerticalVelocity				= getVSpeedKalman(VerticalSpeed_avg_func(verticalSpeed), deltaTime);
+
+  ICD_eADC2OFP.AirPosVel.VerticalVelocity				=  VerticalSpeed_avg_func(verticalSpeed);
+
+  if (isnan(ICD_eADC2OFP.AirPosVel.VerticalVelocity))
+	  ICD_eADC2OFP.AirPosVel.VerticalVelocity = 0.0f;
   /*************************** AVerticallt Speed Calculate Stop ***************************/
 
   ICD_eADC2OFP.AirData_Raw.Pressure_PT_Raw				= (uint32_t)((ADC_Val_avg[ENUM_PRESS_DIFF] * FACTOR_100_NOR));
@@ -289,7 +297,7 @@ void ADS2OFP_DATA(void)
   if (IBIT.flash_status != BMP5_OK) ICD_eADC2OFP.bit.IBIT |= (0x1 << 5);
   if (CBIT.flash_status != BMP5_OK) ICD_eADC2OFP.bit.CBIT |= (0x1 << 5);
 
-  if (PBIT.watchdog_status != BMP5_OK) ICD_eADC2OFP.bit.PBIT |= (0x1 << 6);
+//  if (PBIT.watchdog_status != BMP5_OK) ICD_eADC2OFP.bit.PBIT |= (0x1 << 6);
   if (IBIT.watchdog_status != BMP5_OK) ICD_eADC2OFP.bit.IBIT |= (0x1 << 6);
   if (CBIT.watchdog_status != BMP5_OK) ICD_eADC2OFP.bit.CBIT |= (0x1 << 6);
 

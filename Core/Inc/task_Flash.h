@@ -21,6 +21,7 @@ typedef struct {
     uint32_t signature; // should be APP_SETTINGS_MAGIC when valid
 	uint8_t SERIALNO[32];
 	float CORRECTIONPRESSUREVALUE;
+	float CORRECTIONPRESSUREVALUE2;
 } APP_SETTINGS;
 
 

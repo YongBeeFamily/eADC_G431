@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "delay.h"
 
 #include "main.h"
 #include "../../../Application/include/drivers/bmp5_defs.h"
@@ -165,16 +166,16 @@ int8_t bmp5_interface_init(BMP581_DEV *bmp5_dev, uint8_t intf)
     return rslt;
 }
 
-void bmp5_coines_deinit(void)
-{
-    (void)fflush(stdout);
-
-    (void)coines_set_shuttleboard_vdd_vddio_config(0, 0);
-    coines_delay_msec(100);
-
-    /* Coines interface reset */
-    coines_soft_reset();
-    coines_delay_msec(100);
-
-//    (void)coines_close_comm_intf(COINES_COMM_INTF_USB, NULL);
-}
+//void bmp5_coines_deinit(void)
+//{
+//    (void)fflush(stdout);
+//
+//    (void)coines_set_shuttleboard_vdd_vddio_config(0, 0);
+//    coines_delay_msec(100);
+//
+//    /* Coines interface reset */
+//    coines_soft_reset();
+//    coines_delay_msec(100);
+//
+////    (void)coines_close_comm_intf(COINES_COMM_INTF_USB, NULL);
+//}

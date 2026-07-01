@@ -5,6 +5,7 @@
  *      Author: cbpark
  */
 #include "task_BMP2ADS.h"
+#include "bmp5.h"
 #include "math.h"
 #include "app_config.h"
 #include "module_bmp581.h"
@@ -12,6 +13,7 @@
 #include "task.h"
 #include "cmsis_os.h"
 #include "task_Flash.h"
+#include "delay.h"
 
 
 BMP581_DEV sensor[4];
@@ -56,10 +58,10 @@ void task_BMP2ADS(void const *argument) {
 			{
 				if (i < 2)		// PS
 				{
-					Adc_avg_func(ENUM_PRESS_STATIC, sensor[i].sensor_data.pressure - AppSettings.CORRECTIONPRESSUREVALUE);
+					Adc_avg_func(ENUM_PRESS_STATIC, sensor[i].sensor_data.pressure + AppSettings.CORRECTIONPRESSUREVALUE);
 					Adc_avg_func(ENUM_TEMP_STATIC, sensor[i].sensor_data.temperature);
 				} else {
-					Adc_avg_func(ENUM_PRESS_DIFF, sensor[i].sensor_data.pressure - AppSettings.CORRECTIONPRESSUREVALUE);
+					Adc_avg_func(ENUM_PRESS_DIFF, sensor[i].sensor_data.pressure + AppSettings.CORRECTIONPRESSUREVALUE2);
 					Adc_avg_func(ENUM_TEMP_DIFF, sensor[i].sensor_data.temperature);
 				}
 			}

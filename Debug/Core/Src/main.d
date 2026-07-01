@@ -48,7 +48,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h \
- E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/config/app_config.h
+ C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/config/app_config.h
 ../Core/Inc/main.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
 ../Core/Inc/stm32g4xx_hal_conf.h:
@@ -99,4 +99,4 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h:
-E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/config/app_config.h:
+C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/config/app_config.h:

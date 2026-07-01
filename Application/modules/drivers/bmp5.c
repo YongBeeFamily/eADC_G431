@@ -41,6 +41,7 @@
 /*!             Header files
  ****************************************************************************/
 #include "../../../Application/include/drivers/bmp5.h"
+#include "delay.h"
 
 /***************************************************************************/
 
@@ -1491,7 +1492,7 @@ static int8_t power_up_check(BMP581_DEV *dev)
                 else
                 {
                 	bmp5_soft_reset(dev);
-                	dev->delay_us(3000, 1);
+                	delay_us(3000);
 
                 	rslt = bmp5_get_interrupt_status(&por_status, dev);
                 	if (rslt == BMP5_OK)

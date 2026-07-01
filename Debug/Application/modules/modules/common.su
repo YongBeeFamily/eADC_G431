@@ -1,8 +1,7 @@
-../Application/modules/modules/common.c:33:20:bmp5_i2c_read	112	static
-../Application/modules/modules/common.c:47:20:bmp5_i2c_write	112	static
-../Application/modules/modules/common.c:60:20:bmp5_spi_read	32	static
-../Application/modules/modules/common.c:73:20:bmp5_spi_write	32	static
-../Application/modules/modules/common.c:86:6:bmp5_delay_us	16	static
-../Application/modules/modules/common.c:95:6:bmp5_error_codes_print_result	16	static
-../Application/modules/modules/common.c:139:8:bmp5_interface_init	24	static
-../Application/modules/modules/common.c:168:6:bmp5_coines_deinit	8	static
+../Application/modules/modules/common.c:34:20:bmp5_i2c_read	112	static
+../Application/modules/modules/common.c:48:20:bmp5_i2c_write	112	static
+../Application/modules/modules/common.c:61:20:bmp5_spi_read	32	static
+../Application/modules/modules/common.c:74:20:bmp5_spi_write	32	static
+../Application/modules/modules/common.c:87:6:bmp5_delay_us	16	static
+../Application/modules/modules/common.c:96:6:bmp5_error_codes_print_result	16	static
+../Application/modules/modules/common.c:140:8:bmp5_interface_init	24	static

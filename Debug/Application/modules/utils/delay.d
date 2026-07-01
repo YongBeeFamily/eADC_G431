@@ -1,5 +1,5 @@
 Application/modules/utils/delay.o: ../Application/modules/utils/delay.c \
- E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/utils/delay.h \
+ C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/utils/delay.h \
  ../Core/Inc/main.h ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h \
  ../Core/Inc/stm32g4xx_hal_conf.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc.h \
@@ -32,7 +32,7 @@ Application/modules/utils/delay.o: ../Application/modules/utils/delay.c \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_tim_ex.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_uart_ex.h
-E:/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/utils/delay.h:
+C:/_YongBeeAT\ KjKIM/_YongBeeAT_Works/14.\ ADS/5.\ eADC/firmware/eADC_G431/Application/include/utils/delay.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
 ../Core/Inc/stm32g4xx_hal_conf.h:
