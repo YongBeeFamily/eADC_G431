@@ -7766,7 +7766,7 @@ void task_BMP2ADS(void const *argument) {
  80033ea:	f000 f85b 	bl	80034a4 <Adc_avg_func>
  80033ee:	e022      	b.n	8003436 <task_BMP2ADS+0xde>
 				} else {
-					Adc_avg_func(ENUM_PRESS_DIFF, sensor[i].sensor_data.pressure + AppSettings.CORRECTIONPRESSUREVALUE2);
+					Adc_avg_func(ENUM_PRESS_DIFF, sensor[i].sensor_data.pressure + AppSettings.CORRECTIONPRESSUREVALUE);
  80033f0:	4926      	ldr	r1, [pc, #152]	@ (800348c <task_BMP2ADS+0x134>)
  80033f2:	697a      	ldr	r2, [r7, #20]
  80033f4:	4613      	mov	r3, r2
@@ -7777,7 +7777,7 @@ void task_BMP2ADS(void const *argument) {
  80033fe:	332c      	adds	r3, #44	@ 0x2c
  8003400:	ed93 7a00 	vldr	s14, [r3]
  8003404:	4b23      	ldr	r3, [pc, #140]	@ (8003494 <task_BMP2ADS+0x13c>)
- 8003406:	edd3 7a0a 	vldr	s15, [r3, #40]	@ 0x28
+ 8003406:	edd3 7a09 	vldr	s15, [r3, #36]	@ 0x24
  800340a:	ee77 7a27 	vadd.f32	s15, s14, s15
  800340e:	eeb0 0a67 	vmov.f32	s0, s15
  8003412:	2002      	movs	r0, #2

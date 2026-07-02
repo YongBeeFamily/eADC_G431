@@ -61,7 +61,7 @@ void task_BMP2ADS(void const *argument) {
 					Adc_avg_func(ENUM_PRESS_STATIC, sensor[i].sensor_data.pressure + AppSettings.CORRECTIONPRESSUREVALUE);
 					Adc_avg_func(ENUM_TEMP_STATIC, sensor[i].sensor_data.temperature);
 				} else {
-					Adc_avg_func(ENUM_PRESS_DIFF, sensor[i].sensor_data.pressure + AppSettings.CORRECTIONPRESSUREVALUE2);
+					Adc_avg_func(ENUM_PRESS_DIFF, sensor[i].sensor_data.pressure + AppSettings.CORRECTIONPRESSUREVALUE);
 					Adc_avg_func(ENUM_TEMP_DIFF, sensor[i].sensor_data.temperature);
 				}
 			}
